@@ -339,7 +339,7 @@ public:
     , m_pool(crossplat::threadpool::shared_instance().service(),
              base_uri().scheme() == "https" && !_http_client_communicator::client_config().proxy().is_specified(),
              std::chrono::seconds(30), // Unused sockets are kept in pool for 30 seconds.
-             this->client_config().get_ssl_context_callback()) 
+             this->client_config().get_ssl_context_callback())
     , m_resolver(crossplat::threadpool::shared_instance().service())
     {}
 
@@ -383,14 +383,14 @@ public:
         ctx->m_timer.set_ctx(std::weak_ptr<asio_context>(ctx));
         return ctx;
     }
-    
+
     class ssl_proxy_tunnel : public std::enable_shared_from_this<ssl_proxy_tunnel>
     {
     public:
         ssl_proxy_tunnel(std::shared_ptr<asio_context> context, std::function<void(std::shared_ptr<asio_context>)> ssl_tunnel_established)
             : m_ssl_tunnel_established(ssl_tunnel_established), m_context(context)
         {}
-        
+
         void start_proxy_connect()
         {
             auto proxy = m_context->m_http_client->client_config().proxy();
@@ -424,7 +424,7 @@ public:
             client->m_resolver.async_resolve(query, boost::bind(&ssl_proxy_tunnel::handle_resolve, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::iterator));
         }
 
-    private: 
+    private:
         void handle_resolve(const boost::system::error_code& ec, tcp::resolver::iterator endpoints)
         {
             if (ec)
@@ -475,7 +475,7 @@ public:
                 m_context->report_error("Failed to send connect request to proxy.", err, httpclient_errorcode_context::writebody);
             }
 	    }
-    
+
         void handle_status_line(const boost::system::error_code& ec)
         {
             if (!ec)
@@ -487,13 +487,13 @@ public:
                 response_stream >> http_version;
                 status_code status_code;
                 response_stream >> status_code;
-                
+
                 if (!response_stream || http_version.substr(0, 5) != "HTTP/")
                 {
                     m_context->report_error("Invalid HTTP status line during proxy connection", ec, httpclient_errorcode_context::readheader);
                     return;
                 }
-                
+
                 if (status_code != 200)
                 {
                     utility::stringstream_t err_ss;
@@ -501,9 +501,9 @@ public:
                     m_context->report_error(err_ss.str(), ec, httpclient_errorcode_context::readheader);
                     return;
                 }
-                
+
                 m_context->m_connection->upgrade_to_ssl();
-                
+
                 m_ssl_tunnel_established(m_context);
             }
             else
@@ -517,14 +517,14 @@ public:
                     // Failed to write to socket because connection was already closed while it was in the pool.
                     // close() here ensures socket is closed in a robust way and prevents the connection from being put to the pool again.
                     m_context->m_connection->close();
-            
+
                     // Create a new context and copy the request object, completion event and
                     // cancellation registration to maintain the old state.
                     // This also obtains a new connection from pool.
                     auto new_ctx = m_context->create_request_context(m_context->m_http_client, m_context->m_request);
                     new_ctx->m_request_completion = m_context->m_request_completion;
                     new_ctx->m_cancellationRegistration = m_context->m_cancellationRegistration;
-            
+
                     auto client = std::static_pointer_cast<asio_client>(m_context->m_http_client);
                     // Resend the request using the new context.
                     client->send_request(new_ctx);
@@ -535,15 +535,15 @@ public:
                 }
             }
         }
-    
+
         std::function<void(std::shared_ptr<asio_context>)> m_ssl_tunnel_established;
         std::shared_ptr<asio_context> m_context;
-    
+
         boost::asio::streambuf m_request;
         boost::asio::streambuf m_response;
     };
-    
-    
+
+
     enum class http_proxy_type
     {
         none,
@@ -558,11 +558,11 @@ public:
             request_context::report_error(make_error_code(std::errc::operation_canceled).value(), "Request canceled by user.");
             return;
         }
-        
+
         http_proxy_type proxy_type = http_proxy_type::none;
         utility::string_t proxy_host;
         int proxy_port = -1;
-        
+
         // There is no support for auto-detection of proxies on non-windows platforms, it must be specified explicitly from the client code.
         if (m_http_client->client_config().proxy().is_specified())
         {
@@ -572,7 +572,7 @@ public:
             proxy_port = proxy_uri.port() == -1 ? 8080 : proxy_uri.port();
             proxy_host = proxy_uri.host();
         }
-        
+
         auto start_http_request_flow = [proxy_type, proxy_host, proxy_port](std::shared_ptr<asio_context> ctx)
         {
             if (ctx->m_request._cancellation_token().is_canceled())
@@ -580,20 +580,20 @@ public:
                 ctx->request_context::report_error(make_error_code(std::errc::operation_canceled).value(), "Request canceled by user.");
                 return;
             }
-                
+
             const auto &base_uri = ctx->m_http_client->base_uri();
             const auto full_uri = uri_builder(base_uri).append(ctx->m_request.relative_uri()).to_uri();
-                
+
             // For a normal http proxy, we need to specify the full request uri, otherwise just specify the resource
             auto encoded_resource = proxy_type == http_proxy_type::http ? full_uri.to_string() : full_uri.resource().to_string();
-                
+
             if (encoded_resource == "")
             {
                 encoded_resource = "/";
             }
-                
+
             const auto &method = ctx->m_request.method();
-                
+
             // stop injection of headers via method
             // resource should be ok, since it's been encoded
             // and host won't resolve
@@ -602,35 +602,35 @@ public:
                 ctx->report_exception(http_exception("The method string is invalid."));
                 return;
             }
-                
+
             std::ostream request_stream(&ctx->m_body_buf);
             request_stream.imbue(std::locale::classic());
             const auto &host = base_uri.host();
-                
+
             request_stream << method << " " << encoded_resource << " " << "HTTP/1.1" << CRLF;
-                
+
             int port = base_uri.port();
-                
+
             if (base_uri.is_port_default())
             {
                 port = (ctx->m_connection->is_ssl() ? 443 : 80);
             }
-                
+
             // Add the Host header if user has not specified it explicitly
             if (!ctx->m_request.headers().has(header_names::host))
             {
                 request_stream << "Host: " << host << ":" << port << CRLF;
             }
-                
+
             // Extra request headers are constructed here.
             utility::string_t extra_headers;
-                
+
             // Add header for basic proxy authentication
             if (proxy_type == http_proxy_type::http && ctx->m_http_client->client_config().proxy().credentials().is_set())
             {
                 extra_headers.append(ctx->generate_basic_proxy_auth_header());
             }
-                
+
             // Check user specified transfer-encoding.
             std::string transferencoding;
             if (ctx->m_request.headers().match(header_names::transfer_encoding, transferencoding) && transferencoding == "chunked")
@@ -647,7 +647,7 @@ public:
                     extra_headers.append(":chunked" + CRLF);
                 }
             }
-                
+
             if (proxy_type == http_proxy_type::http)
             {
                 extra_headers.append(header_names::cache_control);
@@ -655,18 +655,18 @@ public:
                 extra_headers.append(header_names::pragma);
                 extra_headers.append(": no-cache" + CRLF);
             }
-                
+
             request_stream << flatten_http_headers(ctx->m_request.headers());
             request_stream << extra_headers;
             // Enforce HTTP connection keep alive (even for the old HTTP/1.0 protocol).
             request_stream << "Connection: Keep-Alive" << CRLF << CRLF;
-                
+
             // Start connection timeout timer.
             if (!ctx->m_timer.has_started())
             {
                 ctx->m_timer.start();
             }
-                
+
             if (ctx->m_connection->is_reused() || proxy_type == http_proxy_type::ssl_tunnel)
             {
                 // If socket is a reused connection or we're connected via an ssl-tunneling proxy, try to write the request directly. In both cases we have already established a tcp connection.
@@ -676,16 +676,16 @@ public:
             {
                 // If the connection is new (unresolved and unconnected socket), then start async
                 // call to resolve first, leading eventually to request write.
-                    
+
                 // For normal http proxies, we want to connect directly to the proxy server. It will relay our request.
                 auto tcp_host = proxy_type == http_proxy_type::http ? proxy_host : host;
                 auto tcp_port = proxy_type == http_proxy_type::http ? proxy_port : port;
-                    
+
                 tcp::resolver::query query(tcp_host, utility::conversions::print_string(tcp_port, std::locale::classic()));
                 auto client = std::static_pointer_cast<asio_client>(ctx->m_http_client);
                 client->m_resolver.async_resolve(query, boost::bind(&asio_context::handle_resolve, ctx, boost::asio::placeholders::error, boost::asio::placeholders::iterator));
             }
-        
+
                 // Register for notification on cancellation to abort this request.
             if (ctx->m_request._cancellation_token() != pplx::cancellation_token::none())
             {
@@ -702,7 +702,7 @@ public:
                 });
             }
         };
-        
+
         if (proxy_type == http_proxy_type::ssl_tunnel)
         {
             // The ssl_tunnel_proxy keeps the context alive and then calls back once the ssl tunnel is established via 'start_http_request_flow'
@@ -733,16 +733,16 @@ private:
     utility::string_t generate_basic_proxy_auth_header()
     {
         utility::string_t header;
-        
+
         header.append(header_names::proxy_authorization);
         header.append(": Basic ");
-        
+
         auto credential_str = web::details::plaintext_string(new ::utility::string_t(m_http_client->client_config().proxy().credentials().username()));
         credential_str->append(":");
         credential_str->append(*m_http_client->client_config().proxy().credentials().decrypt());
-        
+
         std::vector<unsigned char> credentials_buffer(credential_str->begin(), credential_str->end());
-        
+
         header.append(utility::conversions::to_base64(credentials_buffer));
         header.append(CRLF);
         return header;
@@ -790,7 +790,7 @@ private:
 
     void handle_connect(const boost::system::error_code& ec, tcp::resolver::iterator endpoints)
     {
-       
+
         m_timer.reset();
         if (!ec)
         {
@@ -983,7 +983,7 @@ private:
             // Reuse error handling.
             return handle_write_body(ec);
         }
-        
+
         m_timer.reset();
         const auto &progress = m_request._get_impl()->_progress_handler();
         if (progress)
@@ -1064,7 +1064,7 @@ private:
             response_stream >> http_version;
             status_code status_code;
             response_stream >> status_code;
-            
+
             std::string status_message;
             std::getline(response_stream, status_message);
 
@@ -1123,7 +1123,9 @@ private:
             if (colon != std::string::npos)
             {
                 auto name = header.substr(0, colon);
-                auto value = header.substr(colon + 2, header.size() - (colon + 3)); // also exclude '\r'
+
+                //read value from immediately after colon, and exclude \r.
+                auto value = header.substr(colon + 1, header.size() - colon - 2));
                 boost::algorithm::trim(name);
                 boost::algorithm::trim(value);
 
@@ -1474,7 +1476,7 @@ void asio_client::send_request(const std::shared_ptr<request_context> &request_c
         {
             client_config().invoke_nativehandle_options(ctx->m_connection->m_ssl_stream.get());
         }
-        else 
+        else
         {
             client_config().invoke_nativehandle_options(&(ctx->m_connection->m_socket));
         }
