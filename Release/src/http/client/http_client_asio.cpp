@@ -1124,7 +1124,7 @@ private:
             {
                 auto name = header.substr(0, colon);
 				//read value from immediately after colon, and exclude \r.
-				auto value = header.substr(colon + 1, header.size() - colon - 2));
+				auto value = header.substr(colon + 1, header.size() - colon - 2);
                 boost::algorithm::trim(name);
                 boost::algorithm::trim(value);
 
