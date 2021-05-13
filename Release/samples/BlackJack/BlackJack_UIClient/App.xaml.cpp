@@ -1,27 +1,16 @@
-﻿/***
-* ==++==
-*
-* Copyright (c) Microsoft Corporation. All rights reserved. 
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-* http://www.apache.org/licenses/LICENSE-2.0
-* 
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*
-* ==--==
-* =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-*
-* App.xaml.cpp - Implementation of the App class.
-*
-* =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-****/
+/***
+ * Copyright (C) Microsoft. All rights reserved.
+ * Licensed under the MIT license. See LICENSE.txt file in the project root for full license information.
+ *
+ * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+ *
+ * App.xaml.cpp - Implementation of the App class.
+ *
+ * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+ ****/
 
 #include "pch.h"
+
 #include "PlayingTable.xaml.h"
 
 using namespace BlackjackClient;
@@ -48,8 +37,8 @@ using namespace Windows::UI::Xaml::Navigation;
 /// </summary>
 App::App()
 {
-	InitializeComponent();
-	Suspending += ref new SuspendingEventHandler(this, &App::OnSuspending);
+    InitializeComponent();
+    Suspending += ref new SuspendingEventHandler(this, &App::OnSuspending);
 }
 
 /// <summary>
@@ -58,55 +47,54 @@ App::App()
 /// search results, and so forth.
 /// </summary>
 /// <param name="args">Details about the launch request and process.</param>
-void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs^ args)
+void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs ^ args)
 {
-	auto rootFrame = dynamic_cast<Frame^>(Window::Current->Content);
+    auto rootFrame = dynamic_cast<Frame ^>(Window::Current->Content);
 
-	// Do not repeat app initialization when the Window already has content,
-	// just ensure that the window is active
-	if (rootFrame == nullptr)
-	{
-		// Create a Frame to act as the navigation context and associate it with
-		// a SuspensionManager key
-		rootFrame = ref new Frame();
+    // Do not repeat app initialization when the Window already has content,
+    // just ensure that the window is active
+    if (rootFrame == nullptr)
+    {
+        // Create a Frame to act as the navigation context and associate it with
+        // a SuspensionManager key
+        rootFrame = ref new Frame();
 
-		if (args->PreviousExecutionState == ApplicationExecutionState::Terminated)
-		{
-			// TODO: Restore the saved session state only when appropriate, scheduling the
-			// final launch steps after the restore is complete
+        if (args->PreviousExecutionState == ApplicationExecutionState::Terminated)
+        {
+            // TODO: Restore the saved session state only when appropriate, scheduling the
+            // final launch steps after the restore is complete
+        }
 
-		}
-
-		if (rootFrame->Content == nullptr)
-		{
-			// When the navigation stack isn't restored navigate to the first page,
-			// configuring the new page by passing required information as a navigation
-			// parameter
-			if (!rootFrame->Navigate(TypeName(PlayingTable::typeid), args->Arguments))
-			{
-				throw ref new FailureException("Failed to create initial page");
-			}
-		}
-		// Place the frame in the current Window
-		Window::Current->Content = rootFrame;
-		// Ensure the current window is active
-		Window::Current->Activate();
-	}
-	else
-	{
-		if (rootFrame->Content == nullptr)
-		{
-			// When the navigation stack isn't restored navigate to the first page,
-			// configuring the new page by passing required information as a navigation
-			// parameter
-			if (!rootFrame->Navigate(TypeName(PlayingTable::typeid), args->Arguments))
-			{
-				throw ref new FailureException("Failed to create initial page");
-			}
-		}
-		// Ensure the current window is active
-		Window::Current->Activate();
-	}
+        if (rootFrame->Content == nullptr)
+        {
+            // When the navigation stack isn't restored navigate to the first page,
+            // configuring the new page by passing required information as a navigation
+            // parameter
+            if (!rootFrame->Navigate(TypeName(PlayingTable::typeid), args->Arguments))
+            {
+                throw ref new FailureException("Failed to create initial page");
+            }
+        }
+        // Place the frame in the current Window
+        Window::Current->Content = rootFrame;
+        // Ensure the current window is active
+        Window::Current->Activate();
+    }
+    else
+    {
+        if (rootFrame->Content == nullptr)
+        {
+            // When the navigation stack isn't restored navigate to the first page,
+            // configuring the new page by passing required information as a navigation
+            // parameter
+            if (!rootFrame->Navigate(TypeName(PlayingTable::typeid), args->Arguments))
+            {
+                throw ref new FailureException("Failed to create initial page");
+            }
+        }
+        // Ensure the current window is active
+        Window::Current->Activate();
+    }
 }
 
 /// <summary>
@@ -116,10 +104,10 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
 /// </summary>
 /// <param name="sender">The source of the suspend request.</param>
 /// <param name="e">Details about the suspend request.</param>
-void App::OnSuspending(Object^ sender, SuspendingEventArgs^ e)
+void App::OnSuspending(Object ^ sender, SuspendingEventArgs ^ e)
 {
-	(void) sender;	// Unused parameter
-	(void) e;	// Unused parameter
+    (void)sender; // Unused parameter
+    (void)e;      // Unused parameter
 
-	//TODO: Save application state and stop any background activity
+    // TODO: Save application state and stop any background activity
 }

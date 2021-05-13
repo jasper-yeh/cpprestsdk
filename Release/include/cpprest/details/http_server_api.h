@@ -1,25 +1,13 @@
 /***
-* ==++==
-*
-* Copyright (c) Microsoft Corporation. All rights reserved.
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*
-* ==--==
-* =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-*
-* HTTP Library: exposes the entry points to the http server transport apis.
-*
-* =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-****/
+ * Copyright (C) Microsoft. All rights reserved.
+ * Licensed under the MIT license. See LICENSE.txt file in the project root for full license information.
+ *
+ * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+ *
+ * HTTP Library: exposes the entry points to the http server transport apis.
+ *
+ * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+ ****/
 
 #pragma once
 
@@ -27,16 +15,17 @@
 #error "Error: http server APIs are not supported in XP"
 #endif //_WIN32_WINNT < _WIN32_WINNT_VISTA
 
+#include "cpprest/http_listener.h"
 #include <memory>
 
-#include "cpprest/http_listener.h"
-
-namespace web { namespace http
+namespace web
 {
-namespace experimental {
+namespace http
+{
+namespace experimental
+{
 namespace details
 {
-
 class http_server;
 
 /// <summary>
@@ -49,7 +38,6 @@ class http_server;
 class http_server_api
 {
 public:
-
     /// <summary>
     /// Returns whether or not any listeners are registered.
     /// </summary>
@@ -68,20 +56,21 @@ public:
     /// <summary>
     /// Registers a listener for HTTP requests and starts receiving.
     /// </summary>
-    static pplx::task<void> __cdecl register_listener(_In_ web::http::experimental::listener::details::http_listener_impl *pListener);
+    static pplx::task<void> __cdecl register_listener(
+        _In_ web::http::experimental::listener::details::http_listener_impl* pListener);
 
     /// <summary>
     /// Unregisters the given listener and stops listening for HTTP requests.
     /// </summary>
-    static pplx::task<void> __cdecl unregister_listener(_In_ web::http::experimental::listener::details::http_listener_impl *pListener);
+    static pplx::task<void> __cdecl unregister_listener(
+        _In_ web::http::experimental::listener::details::http_listener_impl* pListener);
 
     /// <summary>
     /// Gets static HTTP server API. Could be null if no registered listeners.
     /// </summary>
-    static http_server * __cdecl server_api();
+    static http_server* __cdecl server_api();
 
 private:
-
     /// Used to lock access to the server api registration
     static pplx::extensibility::critical_section_t s_lock;
 
@@ -98,4 +87,7 @@ private:
     http_server_api();
 };
 
-}}}} // namespaces
+} // namespace details
+} // namespace experimental
+} // namespace http
+} // namespace web

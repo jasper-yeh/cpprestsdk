@@ -1,17 +1,8 @@
-﻿<!--
- Copyright (c) Microsoft Corporation. All rights reserved. 
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
- http://www.apache.org/licenses/LICENSE-2.0
- 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+<!--
+ Copyright (C) Microsoft. All rights reserved.
+ Licensed under the MIT license. See LICENSE.txt file in the project root for full license information.
 
- =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+ =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
  StandardStyles.xaml
 
     This file contains XAML styles that simplify application development.
@@ -21,7 +12,7 @@
     does not build, or that will not build once additional pages are added.  If variations on these
     styles are desired it is recommended that you copy the content under a new name and modify your
     private copy.
- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+ =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 -->
 
 <ResourceDictionary
@@ -158,7 +149,7 @@
     </Style>
 
     <!-- Button styles -->
-    
+
     <!--
         TextButtonStyle is used to style a Button using subheader-styled text with no other adornment.  There
         are two styles that are based on TextButtonStyle (TextPrimaryButtonStyle and TextSecondaryButtonStyle)
@@ -258,8 +249,8 @@
     </Style>
 
     <!--
-        AppBarButtonStyle is used to style a Button (or ToggleButton) for use in an App Bar.  Content will be centered 
-        and should fit within the 40 pixel radius glyph provided.  16-point Segoe UI Symbol is used for content text 
+        AppBarButtonStyle is used to style a Button (or ToggleButton) for use in an App Bar.  Content will be centered
+        and should fit within the 40 pixel radius glyph provided.  16-point Segoe UI Symbol is used for content text
         to simplify the use of glyphs from that font.  AutomationProperties.Name is used for the text below the glyph.
     -->
     <Style x:Key="AppBarButtonStyle" TargetType="ButtonBase">
@@ -415,15 +406,15 @@
         </Setter>
     </Style>
 
-    <!-- 
+    <!--
         Standard AppBarButton Styles for use with Button and ToggleButton
-    
-        An AppBarButton Style is provided for each of the glyphs in the Segoe UI Symbol font.  
+
+        An AppBarButton Style is provided for each of the glyphs in the Segoe UI Symbol font.
         Uncomment any style you reference (as not all may be required).
     -->
 
     <!--
-    
+
     <Style x:Key="SkipBackAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="SkipBackAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Skip Back"/>
@@ -1552,7 +1543,7 @@
     <!--
         SnappedBackButtonStyle is used to style a Button for use in the title area of a snapped page.  Margins appropriate
         for the conventional page layout are included as part of the style.
-        
+
         The obvious duplication here is necessary as the glyphs used in snapped are not merely smaller versions of the same
         glyph but are actually distinct.
     -->

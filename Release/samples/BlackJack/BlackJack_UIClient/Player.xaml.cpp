@@ -1,28 +1,18 @@
-﻿/***
-* ==++==
-*
-* Copyright (c) Microsoft Corporation. All rights reserved. 
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-* http://www.apache.org/licenses/LICENSE-2.0
-* 
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*
-* ==--==
-* =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-*
-* Player.xaml.cpp: Implementation of the Player class.
-*
-* =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-****/
+/***
+ * Copyright (C) Microsoft. All rights reserved.
+ * Licensed under the MIT license. See LICENSE.txt file in the project root for full license information.
+ *
+ * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+ *
+ * Player.xaml.cpp: Implementation of the Player class.
+ *
+ * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+ ****/
 
 #include "pch.h"
+
 #include "Player.xaml.h"
+
 #include "CardShape.xaml.h"
 #include "cpprest/uri.h"
 
@@ -64,7 +54,13 @@ void PlayerSpace::Update(Player player)
     playerName->Text = ref new Platform::String(web::uri::decode(player.Name).c_str());
     playerBalance->Text = "$" + player.Balance.ToString();
     playerBet->Text = "Bet: $" + player.Hand.bet.ToString();
-    playerInsurance->Text = (player.Hand.insurance > 0) ? "Ins: $" + player.Hand.insurance.ToString() : "";
+    if (player.Hand.insurance > 0) {
+        auto& text = playerInsurance->Text;
+        text.assign("Ins: $");
+        text.append(std::to_string(player.Hand.insurance));
+    } else {
+        text.clear();
+    }
 }
 
 void PlayerSpace::AddCard(Card card)
@@ -95,11 +91,23 @@ void PlayerSpace::ShowResult(BJHandResult result)
 {
     switch (result)
     {
-    case BJHandResult::HR_ComputerWin: playerInsurance->Text = L"Dealer Wins"; playerBet->Text = L""; break;
-    case BJHandResult::HR_PlayerWin: playerInsurance->Text = L"Player Wins"; playerBet->Text = L""; break;
-    case BJHandResult::HR_Push: playerInsurance->Text = L"Push"; playerBet->Text = L""; break;
-    case BJHandResult::HR_PlayerBlackJack: playerInsurance->Text = L"Blackjack!"; playerBet->Text = L""; break;
-    default: break;
+        case BJHandResult::HR_ComputerWin:
+            playerInsurance->Text = L"Dealer Wins";
+            playerBet->Text.clear();
+            break;
+        case BJHandResult::HR_PlayerWin:
+            playerInsurance->Text = L"Player Wins";
+            playerBet->Text.clear();
+            break;
+        case BJHandResult::HR_Push:
+            playerInsurance->Text = L"Push";
+            playerBet->Text.clear();
+            break;
+        case BJHandResult::HR_PlayerBlackJack:
+            playerInsurance->Text = L"Blackjack!";
+            playerBet->Text.clear();
+            break;
+        default: break;
     }
     UpdateLayout();
 }

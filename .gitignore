@@ -1,4 +1,4 @@
-#Visual Studio files
+# Visual Studio files
 *.o
 *.d
 *.so
@@ -38,7 +38,7 @@
 *~
 ipch/
 obj/
-#OSX files
+# OSX files
 *.xccheckout
 *.pbxuser
 *.mode1v3
@@ -63,4 +63,15 @@ Intermediate/
 **/packages/*
 # except build/, which is used as an MSBuild target.
 !**/packages/build/
+.vs/
+# Ignore cmake building directories
+build.*/
+docs/
+# Ignore NuGet artifacts
+.nuget/
+Build_android/build/
+Generated Files/
+# Ignore iOS temp build directories
+Build_iOS/Apple-Boost-BuildScript
 
+/out/
